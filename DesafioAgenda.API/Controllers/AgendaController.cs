@@ -4,12 +4,14 @@ using DesafioAgenda.API.Filters;
 using DesafioAgenda.API.Handlers;
 using DesafioAgenda.API.Models;
 using DesafioAgenda.API.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DesafioAgenda.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     [ServiceFilter(typeof(ValidationFilter))]
     public class AgendaController : ControllerBase
     {
@@ -32,7 +34,6 @@ namespace DesafioAgenda.API.Controllers
             _getContatoByIdHandler = getContatoByIdHandler;
             _getAllContatosHandler = getAllContatosHandler;
         }
-
         [HttpPost]
         public async Task<IActionResult> CreateContato([FromBody] CreateContatoCommand command)
         {
