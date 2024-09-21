@@ -1,8 +1,9 @@
-﻿using DesafioAgenda.API.Commands;
-using DesafioAgenda.API.Models;
-using DesafioAgenda.API.Services;
-using DesafioAgenda.API.Common;
+﻿using DesafioAgenda.Domain.Commands;
+using DesafioAgenda.Domain.Models;
+using DesafioAgenda.Interface.IServices;
+using DesafioAgenda.Domain.Common;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace DesafioAgenda.API.Handlers
 {
@@ -27,7 +28,13 @@ namespace DesafioAgenda.API.Handlers
                 return HandleError<string>(new Exception("Credenciais inválidas"), "Login falhou");
             }
 
-            var token = _jwtService.GenerateToken(user);
+            var claims = new[]
+            {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username)
+            };
+
+            var token = _jwtService.GenerateToken(claims);
             return HandleSuccess(token, "Login realizado com sucesso.");
         }
     }

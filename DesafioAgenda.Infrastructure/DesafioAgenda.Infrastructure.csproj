@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DesafioAgenda.Domain\DesafioAgenda.Domain.csproj" />
+		<ProjectReference Include="..\DesafioAgenda.API\DesafioAgenda.API.csproj" />
+		<ProjectReference Include="..\DesafioAgenda.Interface\DesafioAgenda.Interface.csproj" />
+		<ProjectReference Include="..\DesafioAgenda.Service\DesafioAgenda.Service.csproj" />
+	</ItemGroup>
+
+</Project>

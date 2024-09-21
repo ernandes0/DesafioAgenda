@@ -1,7 +1,7 @@
-﻿using DesafioAgenda.API.Models;
-using DesafioAgenda.API.Queries;
-using DesafioAgenda.API.Services;
-using DesafioAgenda.API.Common;
+﻿using DesafioAgenda.Domain.Models;
+using DesafioAgenda.Interface.IServices;
+using DesafioAgenda.Domain.Common;
+using DesafioAgenda.Domain.Queries;
 
 namespace DesafioAgenda.API.Handlers
 {

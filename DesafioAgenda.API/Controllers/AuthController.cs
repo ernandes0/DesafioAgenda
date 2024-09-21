@@ -1,6 +1,5 @@
-﻿using DesafioAgenda.API.Commands;
-using DesafioAgenda.API.Handlers;
-using DesafioAgenda.API.Models;
+﻿using DesafioAgenda.API.Handlers;
+using DesafioAgenda.Domain.Commands;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DesafioAgenda.API.Controllers

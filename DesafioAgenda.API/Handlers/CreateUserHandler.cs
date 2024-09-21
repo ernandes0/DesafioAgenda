@@ -1,7 +1,7 @@
-﻿using DesafioAgenda.API.Commands;
-using DesafioAgenda.API.Models;
-using DesafioAgenda.API.Services;
-using DesafioAgenda.API.Common;
+﻿using DesafioAgenda.Domain.Commands;
+using DesafioAgenda.Domain.Models;
+using DesafioAgenda.Interface.IServices;
+using DesafioAgenda.Domain.Common;
 using Microsoft.AspNetCore.Identity;
 
 namespace DesafioAgenda.API.Handlers
@@ -19,6 +19,11 @@ namespace DesafioAgenda.API.Handlers
 
         public async Task<ServiceResponse<UserModel>> Handle(CreateUserCommand command)
         {
+            if (await _userService.IsUsernameTaken(command.Username))
+            {
+                return HandleError<UserModel>(new Exception("Este nome de usuário já está em uso"), "Erro ao criar usuário");
+            }
+
             var user = new UserModel
             {
                 Username = command.Username
@@ -26,15 +31,7 @@ namespace DesafioAgenda.API.Handlers
 
             user.PasswordHash = _passwordHasher.HashPassword(user, command.Password);
 
-            try
-            {
-                await _userService.CreateUserAsync(user);
-                return HandleSuccess(user, "Usuário criado com sucesso.");
-            }
-            catch (Exception ex)
-            {
-                return HandleError<UserModel>(ex, "Erro ao criar usuário");
-            }
+            return await _userService.CreateUserAsync(user);
         }
     }
 }
