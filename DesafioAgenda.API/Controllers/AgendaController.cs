@@ -58,7 +58,7 @@ namespace DesafioAgenda.API.Controllers
             var result = await _updateContatoHandler.Handle(command, id);
 
             if (!result.Sucesso)
-                return NotFound(result);
+                return BadRequest(result);
 
             return Ok(result);
         }
@@ -70,7 +70,7 @@ namespace DesafioAgenda.API.Controllers
             var result = await _deleteContatoHandler.Handle(new DeleteContatoCommand { Id = id });
 
             if (!result.Sucesso)
-                return NotFound(result);
+                return BadRequest(result);
 
             return Ok(result);
         }
@@ -82,7 +82,7 @@ namespace DesafioAgenda.API.Controllers
             var result = await _getContatoByIdHandler.Handle(new GetContatoByIdQuery { Id = id });
 
             if (!result.Sucesso)
-                return NotFound(result);
+                return BadRequest(result);
 
             return Ok(result);
         }

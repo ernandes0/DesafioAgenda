@@ -8,35 +8,32 @@ namespace DesafioAgenda.API.Handlers
     public class DeleteContatoHandler : BaseHandler
     {
         private readonly IAgendaInterface _repository;
+        private readonly IAuthenticationService _authenticationService;
 
-        public DeleteContatoHandler(IAgendaInterface repository)
+        public DeleteContatoHandler(IAgendaInterface repository, IAuthenticationService authenticationService)
         {
             _repository = repository;
+            _authenticationService = authenticationService;
         }
 
         public async Task<ServiceResponse<bool>> Handle(DeleteContatoCommand command)
         {
-            try
+            var userId = _authenticationService.GetUserId();
+            var contato = await _repository.GetContatoByIdAsync(command.Id);
+
+            if (contato == null || contato.UserId != userId)
             {
-                var contato = await _repository.GetContatoByIdAsync(command.Id);
-                if (contato == null)
+                return new ServiceResponse<bool>
                 {
-                    return new ServiceResponse<bool>
-                    {
-                        Sucesso = false,
-                        Mensagem = "Contato não encontrado."
-                    };
-                }
-
-                contato.Ativo = false;
-                await _repository.UpdateContatoAsync(contato);
-
-                return HandleSuccess(true, "Contato desativado com sucesso.");
+                    Sucesso = false,
+                    Mensagem = "Você não tem permissão para desativar este contato."
+                };
             }
-            catch (Exception ex)
-            {
-                return HandleError<bool>(ex, "Erro ao desativar o contato");
-            }
+
+            contato.Ativo = false;
+            await _repository.UpdateContatoAsync(contato);
+
+            return HandleSuccess(true, "Contato desativado com sucesso.");
         }
     }
 }

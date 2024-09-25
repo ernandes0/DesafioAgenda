@@ -8,32 +8,29 @@ namespace DesafioAgenda.API.Handlers
     public class GetContatoByIdHandler : BaseHandler
     {
         private readonly IAgendaInterface _repository;
+        private readonly IAuthenticationService _authenticationService;
 
-        public GetContatoByIdHandler(IAgendaInterface repository)
+        public GetContatoByIdHandler(IAgendaInterface repository, IAuthenticationService authenticationService)
         {
             _repository = repository;
+            _authenticationService = authenticationService;
         }
 
         public async Task<ServiceResponse<AgendaModel>> Handle(GetContatoByIdQuery query)
         {
-            try
-            {
-                var contato = await _repository.GetContatoByIdAsync(query.Id);
-                if (contato == null)
-                {
-                    return new ServiceResponse<AgendaModel>
-                    {
-                        Sucesso = false,
-                        Mensagem = "Contato não encontrado."
-                    };
-                }
+            var userId = _authenticationService.GetUserId();
+            var contato = await _repository.GetContatoByIdAsync(query.Id);
 
-                return HandleSuccess(contato, "Contato encontrado com sucesso.");
-            }
-            catch (Exception ex)
+            if (contato == null || contato.UserId != userId)
             {
-                return HandleError<AgendaModel>(ex, "Erro ao buscar o contato");
+                return new ServiceResponse<AgendaModel>
+                {
+                    Sucesso = false,
+                    Mensagem = "Você não tem permissão para visualizar este contato."
+                };
             }
+
+            return HandleSuccess(contato, "Contato encontrado com sucesso.");
         }
     }
 }

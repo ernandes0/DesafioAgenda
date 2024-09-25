@@ -8,38 +8,35 @@ namespace DesafioAgenda.API.Handlers
     public class UpdateContatoHandler : BaseHandler
     {
         private readonly IAgendaInterface _repository;
+        private readonly IAuthenticationService _authenticationService;
 
-        public UpdateContatoHandler(IAgendaInterface repository)
+        public UpdateContatoHandler(IAgendaInterface repository, IAuthenticationService authenticationService)
         {
             _repository = repository;
+            _authenticationService = authenticationService;
         }
 
         public async Task<ServiceResponse<AgendaModel>> Handle(UpdateContatoCommand command, int id)
         {
-            try
+            var userId = _authenticationService.GetUserId();
+            var contato = await _repository.GetContatoByIdAsync(id);
+
+            if (contato == null || contato.UserId != userId)
             {
-                var contato = await _repository.GetContatoByIdAsync(id);
-                if (contato == null)
+                return new ServiceResponse<AgendaModel>
                 {
-                    return new ServiceResponse<AgendaModel>
-                    {
-                        Sucesso = false,
-                        Mensagem = "Contato não encontrado."
-                    };
-                }
-
-                contato.Nome = command.Nome;
-                contato.Telefone = command.Telefone;
-                contato.Email = command.Email;
-
-                await _repository.UpdateContatoAsync(contato);
-
-                return HandleSuccess(contato, "Contato atualizado com sucesso.");
+                    Sucesso = false,
+                    Mensagem = "Você não tem permissão para editar este contato."
+                };
             }
-            catch (Exception ex)
-            {
-                return HandleError<AgendaModel>(ex, "Erro ao atualizar o contato");
-            }
+
+            contato.Nome = command.Nome;
+            contato.Telefone = command.Telefone;
+            contato.Email = command.Email;
+
+            await _repository.UpdateContatoAsync(contato);
+
+            return HandleSuccess(contato, "Contato atualizado com sucesso.");
         }
     }
 }
